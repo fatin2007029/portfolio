@@ -13,6 +13,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Start the session
+session_start();
 // Retrieve form data
 $username = $_POST['username'];
 $password = $_POST['password'];
@@ -24,6 +26,15 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     // User found, login successful
+    // Store user information in the session
+    $_SESSION['username'] = $username;
+
+     // Set a cookie for additional persistence
+     $cookie_name = "user";
+     $cookie_value = $username;
+     $cookie_expire = time() + (86400 * 30); // 30 days
+     setcookie($cookie_name, $cookie_value, $cookie_expire, "/");
+
     // Redirect to admin.html
     header("Location: a.html");
     exit; // Make sure to exit after the redirect to prevent further execution
